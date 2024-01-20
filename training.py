@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -- coding: utf-8 --
+# -*- coding: utf-8 -*-
 
 import os
 import re
@@ -39,7 +39,7 @@ def _parse_function(input_path, gt_path, patch_size=patch_size):
 
     return Data, Label
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     tf.compat.v1.disable_eager_execution()
 
     input_files = os.listdir(input_path)
@@ -56,7 +56,7 @@ if _name_ == '_main_':
     dataset = dataset.prefetch(buffer_size=batch_size * 10)
     dataset = dataset.batch(batch_size).repeat()
 
-    # Use tf.compat.v1.data.make_one_shot_iterator for non-eager execution
+    # Use `tf.compat.v1.data.make_one_shot_iterator` for non-eager execution
     iterator = tf.compat.v1.data.make_one_shot_iterator(dataset)
     inputs, labels = iterator.get_next()
 

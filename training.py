@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -- coding: utf-8 --
 
 import os
 import re
@@ -13,11 +13,11 @@ os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 num_pyramids = 5
-learning_rate = 1e-3
-iterations = 2000
+learning_rate = 1e-5
+iterations = 100000
 batch_size = 10
 num_channels = 3
-patch_size = 80
+patch_size = 40
 save_model_path = './model/'
 model_name = 'model-epoch'
 
@@ -39,7 +39,7 @@ def _parse_function(input_path, gt_path, patch_size=patch_size):
 
     return Data, Label
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     tf.compat.v1.disable_eager_execution()
 
     input_files = os.listdir(input_path)
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     dataset = dataset.prefetch(buffer_size=batch_size * 10)
     dataset = dataset.batch(batch_size).repeat()
 
-    # Use `tf.compat.v1.data.make_one_shot_iterator` for non-eager execution
+    # Use tf.compat.v1.data.make_one_shot_iterator for non-eager execution
     iterator = tf.compat.v1.data.make_one_shot_iterator(dataset)
     inputs, labels = iterator.get_next()
 
@@ -122,12 +122,12 @@ if __name__ == '__main__':
         start = time.time()
 
         for j in range(start_point, iterations):
-            _, Training_Loss = sess.run([g_optim, loss])
+            _, Training_Loss, ssim_val = sess.run([g_optim, loss, loss52])
 
             if np.mod(j + 1, 100) == 0 and j != 0:
                 end = time.time()
-                print('%d / %d iterations, Training Loss  = %.4f, running time = %.1f s'
-                      % (j + 1, iterations, Training_Loss, (end - start)))
+                print('%d / %d iterations, Training Loss  = %.4f, SSIM = %.4f, running time = %.1f s'
+                      % (j + 1, iterations, Training_Loss, ssim_val, (end - start)))
                 save_path_full = os.path.join(save_model_path, model_name)
                 saver.save(sess, save_path_full, global_step=j + 1)
                 start = time.time()
